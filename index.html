@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Identity Estimator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #e9ecef;
+        }
+
+        .card {
+            width: 340px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h2 {
+            margin: 0 0 10px;
+            font-size: 1.5em;
+        }
+
+        p {
+            font-size: 1em;
+            margin: 10px 0;
+        }
+
+        .explanation {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="profile-card" class="card">
+        <h2>Your Enhanced Identity Profile</h2>
+        <p id="sleepHabit"></p>
+        <p id="sleepExplanation" class="explanation"></p>
+        <p id="techLevel"></p>
+        <p id="techExplanation" class="explanation"></p>
+        <p id="culturalIdentity"></p>
+        <p id="culturalExplanation" class="explanation"></p>
+        <p id="taskStyle"></p>
+        <p id="taskExplanation" class="explanation"></p>
+        <p id="mobility"></p>
+        <p id="mobilityExplanation" class="explanation"></p>
+        <p id="preparedness"></p>
+        <p id="preparednessExplanation" class="explanation"></p>
+
+        <p id="colorTheme"></p>
+        <p id="colorExplanation" class="explanation"></p>
+
+        <p id="tabHabit"></p>
+        <p id="tabExplanation" class="explanation"></p>
+    </div>
+
+    <script>
+        const startTime = Date.now();
+        // Browser Data Extraction
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const language = navigator.language;
+        const userAgent = navigator.userAgent;
+        let deviceType = /Mobi|Android/i.test(userAgent) ? "Mobile" : "Desktop";
+        const screenWidth = window.innerWidth;
+
+
+        // Check Preferred Color Theme
+        const prefersDarkScheme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+        // Track Tab Management - Count of tabs opened in the current session
+        let tabSwitches = 0;
+        window.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") tabSwitches++;
+        });
+
+        // Function to simulate User's Profile with Search Behavior and Location
+        async function getUserProfile(timeZone, language, deviceType, userAgent) {
+            let profile = {};
+
+            // Sleep Habit
+            const hours = new Date().getHours();
+            profile.sleepHabit = hours >= 22 || hours < 6 ? "Night Owl 🌙" : "Early Bird ☀️";
+            profile.sleepExplanation = hours >= 22 || hours < 6 ?
+                "You're online late, suggesting you’re more active during the night." :
+                "You’re active earlier in the day, indicating an early-bird lifestyle.";
+
+            // Tech Level
+            profile.techLevel = userAgent.includes("Linux") || /Chrome\/[9-9][0-9]/.test(userAgent) ? "Tech-Savvy 🖥️" : "Casual User 📱";
+            profile.techExplanation = profile.techLevel === "Tech-Savvy 🖥️" ?
+                "Using advanced tech like Linux or an up-to-date browser suggests tech interest." :
+                "Your device or browser type suggests you enjoy convenience over tech tinkering.";
+
+            // Cultural Identity
+            profile.culturalIdentity = timeZone.includes("America") && language !== "en-US" ? "Globetrotter 🌍" : "Local Explorer 🏡";
+            profile.culturalExplanation = profile.culturalIdentity === "Globetrotter 🌍" ?
+                "Your language differs from your time zone, suggesting a multicultural background." :
+                "Your language and time zone align, indicating you might prefer familiar surroundings.";
+
+            // Task Style based on screen width
+            profile.taskStyle = screenWidth > 1200 ? "Multi-tasker 🖥️" : "Focused Worker 📱";
+            profile.taskExplanation = screenWidth > 1200 ?
+                "Your larger screen size suggests a preference for multi-tasking." :
+                "A smaller screen size hints at a focus on single tasks or mobile browsing.";
+
+            // Mobility based on network information (if available)
+            if (navigator.connection) {
+                const connectionType = navigator.connection.effectiveType;
+                profile.mobility = connectionType === "4g" ? "On the Move 🚗" : "Stationary 📍";
+                profile.mobilityExplanation = connectionType === "4g" ?
+                    "You’re likely connected on mobile data, hinting at a mobile lifestyle." :
+                    "Your connection type suggests a preference for stable, stationary internet.";
+            } else {
+                profile.mobility = "Unknown Mobility 🌐";
+                profile.mobilityExplanation = "Your network information isn’t available, so mobility is uncertain.";
+            }
+
+            // Preparedness based on battery level and charging status
+            if (navigator.getBattery) {
+                const battery = await navigator.getBattery();
+                profile.preparedness = battery.charging || battery.level > 0.8 ? "Prepared ⚡" : "Spontaneous 🔋";
+                profile.preparednessExplanation = battery.charging || battery.level > 0.8 ?
+                    "Your device is well-charged or charging, suggesting preparedness." :
+                    "A lower battery level suggests spontaneity or a preference for living in the moment.";
+            } else {
+                profile.preparedness = "Unknown Preparedness 🔋";
+                profile.preparednessExplanation = "Battery information isn’t available, so preparedness is uncertain.";
+            }
+
+            // Search Behavior - Simulated
+
+            // Color Theme Preference
+            profile.colorTheme = prefersDarkScheme ? "Dark Theme Lover 🖤" : "Light Theme Enthusiast 🌞";
+            profile.colorExplanation = prefersDarkScheme ?
+                "Dark theme hints at a preference for calm, focused environments." :
+                "Light theme suggests a preference for open, bright spaces and an optimistic outlook.";
+
+
+            // Tab Management Habits
+            profile.tabHabit = tabSwitches > 5 ? "Chaotic Multitasker 🌪️" : "Organized Minimalist 📂";
+            profile.tabExplanation = tabSwitches > 5 ?
+                "Frequent tab switching suggests a preference for multitasking." :
+                "Limited tab switching suggests a focused, organized browsing style.";
+            // Location using Geolocation API
+
+            return profile;
+        }
+
+        // Display the Profile
+        async function displayProfile() {
+            // Get user profile data
+            const profile = await getUserProfile(timeZone, language, deviceType, userAgent, colorTheme, tabHabit);
+
+            // Display the profile data
+            document.getElementById("sleepHabit").textContent = `Sleep Habit: ${profile.sleepHabit}`;
+            document.getElementById("sleepExplanation").textContent = profile.sleepExplanation;
+
+            document.getElementById("techLevel").textContent = `Tech Level: ${profile.techLevel}`;
+            document.getElementById("techExplanation").textContent = profile.techExplanation;
+
+            document.getElementById("culturalIdentity").textContent = `Cultural Identity: ${profile.culturalIdentity}`;
+            document.getElementById("culturalExplanation").textContent = profile.culturalExplanation;
+
+            document.getElementById("taskStyle").textContent = `Task Style: ${profile.taskStyle}`;
+            document.getElementById("taskExplanation").textContent = profile.taskExplanation;
+
+            document.getElementById("mobility").textContent = `Mobility: ${profile.mobility}`;
+            document.getElementById("mobilityExplanation").textContent = profile.mobilityExplanation;
+
+            document.getElementById("preparedness").textContent = `Preparedness: ${profile.preparedness}`;
+            document.getElementById("preparednessExplanation").textContent = profile.preparednessExplanation;
+
+
+
+
+
+
+            // Display each new feature
+
+
+            document.getElementById("colorTheme").textContent = `Color Theme: ${profile.colorTheme}`;
+            document.getElementById("colorExplanation").textContent = profile.colorExplanation;
+
+
+            document.getElementById("tabHabit").textContent = `Tab Management: ${profile.tabHabit}`;
+            document.getElementById("tabExplanation").textContent = profile.tabExplanation;
+        }
+
+        // Initially display the profile
+        displayProfile();
+    </script>
+</body>
+
+</html>
